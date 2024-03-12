@@ -1,26 +1,49 @@
 package GUI;
 
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
-//import javax.swing.*;
-
 public class SavingspageController {
+	@FXML
+	private TextField tfSavingsGoal;
 
 	@FXML
-	TextField tfSavingsGoal;
+	private TextField tfIncomeAmount;
 
 	@FXML
-	TextField tfIncomeAmount;
+	private TextField tfTotalExpenses;
 
 	@FXML
-	TextField tfTotalExpenses;
+	private TextField tfActualSavings;
 
 	@FXML
-	TextField tfActualSavings;
+	private Label lblSavingsGoalStatus;
+
+	@FXML
+	private BarChart<String, Number> barChart;
+
+	@FXML
+	private CategoryAxis xAxis;
+
+	@FXML
+	private NumberAxis yAxis;
+
+//    @FXML
+//    private void initialize1() {
+//        // Set the bar chart axes
+//        xAxis.setLabel("Category");
+//        yAxis.setLabel("Value");
+//
+//        // Set the bar chart title (if needed)
+//         barChart.setTitle("Savings Analysis");
+//    }
 
 	@FXML
 	private void initialize() {
@@ -29,21 +52,15 @@ public class SavingspageController {
 	}
 
 	@FXML
-	Label lblSavingsGoalStatus;
-
-	@FXML
-	private void initialize2() {
-		// Initialize the label color to black
-		lblSavingsGoalStatus.setStyle("-fx-text-fill: black;");
-	}
-
-	@FXML
-	void calculateSavings(ActionEvent event) {
+	private void calculateSavings(ActionEvent event) {
 		try {
 			double income = Double.parseDouble(tfIncomeAmount.getText());
 			double expenses = Double.parseDouble(tfTotalExpenses.getText());
 			double savings = income - expenses;
 			tfActualSavings.setText(String.format("%.2f", savings));
+
+			// Update the bar chart
+			updateBarChart(income, expenses, savings);
 
 			// Check if savings goal is reached
 			double savingsGoal = Double.parseDouble(tfSavingsGoal.getText());
@@ -59,5 +76,19 @@ public class SavingspageController {
 		} catch (NumberFormatException e) {
 			tfActualSavings.setText("Invalid input");
 		}
+	}
+
+	private void updateBarChart(double income, double expenses, double savings) {
+		// Clear existing data
+		barChart.getData().clear();
+
+		// Create series for the bar chart
+		XYChart.Series<String, Number> series = new XYChart.Series<>();
+		series.getData().add(new XYChart.Data<>("Savings Goal", Double.parseDouble(tfSavingsGoal.getText())));
+		series.getData().add(new XYChart.Data<>("Actual Savings", savings));
+
+
+		// Add series to the bar chart
+		barChart.getData().add(series);
 	}
 }
